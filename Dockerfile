@@ -64,7 +64,7 @@ RUN	mv /root/zoneminder /etc/init.d/zoneminder && \
 	chmod +x /etc/init.d/zoneminder && \
 	service mysql restart && \
 	sleep 5 && \
-	service apache2 restart && \
+	service apache2 restart #&& \
 	# service zoneminder start
 
 FROM build4 as build5
