@@ -1,4 +1,4 @@
-FROM phusion/baseimage:focal-1.0.0alpha1 as builder
+FROM ubuntu:20.04 as builder
 
 LABEL maintainer="dlandon"
 
