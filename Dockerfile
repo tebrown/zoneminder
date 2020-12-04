@@ -65,7 +65,7 @@ RUN	mv /root/zoneminder /etc/init.d/zoneminder && \
 	service mysql restart && \
 	sleep 5 && \
 	service apache2 restart && \
-	service zoneminder start
+	# service zoneminder start
 
 FROM build4 as build5
 RUN	systemd-tmpfiles --create zoneminder.conf && \
