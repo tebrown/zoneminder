@@ -21,13 +21,10 @@ FROM builder as build1
 COPY init/ /etc/my_init.d/
 COPY defaults/ /root/
 
-RUN	apt-get install -y software-properties-common && \
-        add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
-	add-apt-repository ppa:ondrej/php && \
-	apt-get update && \
+RUN	apt-get update && \
 	apt-get -y upgrade -o Dpkg::Options::="--force-confold" && \
 	apt-get -y dist-upgrade -o Dpkg::Options::="--force-confold" && \
-	apt-get -y install apache2 mariadb-server && \
+	apt-get -y install php zoneminder apache2 mariadb-server && \
 	apt-get -y install ssmtp mailutils net-tools wget sudo make && \
 	apt-get -y install php$PHP_VERS php$PHP_VERS-fpm libapache2-mod-php$PHP_VERS php$PHP_VERS-mysql php$PHP_VERS-gd && \
 	apt-get -y install libcrypt-mysql-perl libyaml-perl libjson-perl libavutil-dev ffmpeg && \
