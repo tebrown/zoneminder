@@ -21,9 +21,9 @@ FROM builder as build1
 COPY init/ /etc/my_init.d/
 COPY defaults/ /root/
 
-RUN	add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
+RUN	apt-get install -y software-properties-common
+        add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
 	add-apt-repository ppa:ondrej/php && \
-	add-apt-repository ppa:jonathonf/ffmpeg-4 && \
 	apt-get update && \
 	apt-get -y upgrade -o Dpkg::Options::="--force-confold" && \
 	apt-get -y dist-upgrade -o Dpkg::Options::="--force-confold" && \
