@@ -1,6 +1,6 @@
 FROM ubuntu:20.04 as builder
 
-LABEL maintainer="dlandon"
+LABEL maintainer="novemberpapa"
 
 ENV	DEBCONF_NONINTERACTIVE_SEEN="true" \
 	DEBIAN_FRONTEND="noninteractive" \
@@ -21,7 +21,7 @@ FROM builder as build1
 COPY init/ /etc/my_init.d/
 COPY defaults/ /root/
 
-RUN	apt-get install -y software-properties-common \
+RUN	apt-get install -y software-properties-common && \
         add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
 	add-apt-repository ppa:ondrej/php && \
 	apt-get update && \
