@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as builder
+FROM phusion/baseimage:focal-1.0.0alpha1-amd64 as builder
 
 LABEL maintainer="novemberpapa"
 
@@ -21,9 +21,7 @@ FROM builder as build1
 COPY init/ /etc/my_init.d/
 COPY defaults/ /root/
 
-RUN	apt-get update && \
-	apt-get -y install software-properties-common && \
-	add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
+RUN	add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
 	apt-get update && \
 	apt-get -y upgrade -o Dpkg::Options::="--force-confold" && \
 	apt-get -y dist-upgrade -o Dpkg::Options::="--force-confold" && \
@@ -67,7 +65,8 @@ RUN	mv /root/zoneminder /etc/init.d/zoneminder && \
 	chmod +x /etc/init.d/zoneminder && \
 	service mysql restart && \
 	sleep 5 && \
-	service apache2 restart
+	service apache2 restart  && \
+	service zoneminder start
 
 FROM build4 as build5
 RUN	systemd-tmpfiles --create zoneminder.conf && \
@@ -84,9 +83,11 @@ RUN	systemd-tmpfiles --create zoneminder.conf && \
 	cp /etc/apache2/sites-enabled/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf.default
 
 FROM build5 as build6
-RUN	rm -rf /tmp/* /var/tmp/* && \
-	chmod +x /etc/my_init.d/*.sh && \
-	apt-get -y autoremove
+RUN	apt-get -y remove make && \
+	apt-get -y clean && \
+	apt-get -y autoremove && \
+	rm -rf /tmp/* /var/tmp/* && \
+	chmod +x /etc/my_init.d/*.sh
 
 FROM build6 as build7
 VOLUME \
