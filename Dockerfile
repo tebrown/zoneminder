@@ -22,6 +22,9 @@ COPY init/ /etc/my_init.d/
 COPY defaults/ /root/
 
 RUN	apt-get update && \
+	apt-get -y install software-properties-common && \
+	add-apt-repository -y ppa:iconnor/zoneminder-$ZM_VERS && \
+	apt-get update && \
 	apt-get -y upgrade -o Dpkg::Options::="--force-confold" && \
 	apt-get -y dist-upgrade -o Dpkg::Options::="--force-confold" && \
 	apt-get -y install php zoneminder apache2 mariadb-server && \
@@ -64,8 +67,7 @@ RUN	mv /root/zoneminder /etc/init.d/zoneminder && \
 	chmod +x /etc/init.d/zoneminder && \
 	service mysql restart && \
 	sleep 5 && \
-	service apache2 restart #&& \
-	# service zoneminder start
+	service apache2 restart
 
 FROM build4 as build5
 RUN	systemd-tmpfiles --create zoneminder.conf && \
@@ -75,23 +77,24 @@ RUN	systemd-tmpfiles --create zoneminder.conf && \
 	chown -R www-data:www-data /var/lib/zmeventnotification/ && \
 	chmod -R +x /etc/my_init.d/ && \
 	cp -p /etc/zm/zm.conf /root/zm.conf && \
+	mkdir -p /etc/cron.weekly && \
 	echo "#!/bin/sh\n\n/usr/bin/zmaudit.pl -f" >> /etc/cron.weekly/zmaudit && \
 	chmod +x /etc/cron.weekly/zmaudit && \
 	cp /etc/apache2/ports.conf /etc/apache2/ports.conf.default && \
 	cp /etc/apache2/sites-enabled/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf.default
 
 FROM build5 as build6
-RUN	apt-get -y autoremove && \
-	rm -rf /tmp/* /var/tmp/* && \
-	chmod +x /etc/my_init.d/*.sh
+RUN	rm -rf /tmp/* /var/tmp/* && \
+	chmod +x /etc/my_init.d/*.sh && \
+	apt-get -y autoremove
 
-#FROM build6 as build7
-#VOLUME \
-	#["/config"] \
-	#["/var/cache/zoneminder"]
+FROM build6 as build7
+VOLUME \
+	["/config"] \
+	["/var/cache/zoneminder"]
 
-#   FROM build6 as build8
-#EXPOSE 80 443 9000
+FROM build7 as build8
+EXPOSE 80 443 9000
 
-#FROM build8
-#CMD ["/sbin/my_init"]
+FROM build8
+CMD ["/sbin/my_init"]
