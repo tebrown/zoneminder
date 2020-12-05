@@ -80,14 +80,14 @@ RUN	systemd-tmpfiles --create zoneminder.conf && \
 	cp /etc/apache2/ports.conf /etc/apache2/ports.conf.default && \
 	cp /etc/apache2/sites-enabled/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf.default
 
-FROM build5 as build6
-RUN	apt-get -y remove make && \
-	apt-get -y clean && \
-	apt-get -y autoremove && \
-	rm -rf /tmp/* /var/tmp/* && \
-	chmod +x /etc/my_init.d/*.sh
+#FROM build5 as build6
+#RUN	apt-get -y remove make && \
+	#apt-get -y clean && \
+	#apt-get -y autoremove && \
+	#rm -rf /tmp/* /var/tmp/* && \
+	#chmod +x /etc/my_init.d/*.sh
 
-FROM build6 as build7
+FROM build5 as build7
 VOLUME \
 	["/config"] \
 	["/var/cache/zoneminder"]
